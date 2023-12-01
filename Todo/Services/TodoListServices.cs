@@ -1,16 +1,19 @@
 ﻿namespace Todo.Services;
 
 using Todo.Models;
+using System.Linq;
 
-//interface ITodoListServices
-//{
-//    List<Todo> todoList {  get; set; }
-//    void AddTodoItem(Todo todo) { }
-//    void DoneTodoItem(int option) { }
-//    void DeleteTodoItem(int option) { }
-
-//    List<Todo> GetTodoList() { }
-//}
+interface ITodoListServices
+{
+    List<Todo> todoList { get; }
+    void AddTodoItem(Todo todo);
+    void DoneTodoItem(int option);
+    void UpdateTodoItem(int option);
+    void DeleteTodoItem(int option);
+    void ClearDoneList();
+    List<Todo> GetTodoList();
+    void SortList();
+}
 
 public class TodoListServices
 {
@@ -31,6 +34,23 @@ public class TodoListServices
         if(option < todoList.Count() && !todoList[option].done)
         {
             todoList[option].done = true;
+            SortTodoList();
+        }
+        else
+        {
+            Console.WriteLine("Not a valid item.");
+            Console.ReadKey();
+        }
+    }
+
+    public void UpdateTodoItem(int option)
+    {
+        option = option - 1;
+        if (option < todoList.Count() && !todoList[option].done)
+        {
+            Console.WriteLine($"Previous value: {todoList[option].text}");
+            Console.Write("New value: ");
+            todoList[option].text = Console.ReadLine()!;
         }
         else
         {
@@ -57,5 +77,12 @@ public class TodoListServices
         todoList.RemoveAll(todo => todo.done);
     }
 
-    public List<Todo> GetTodoList() { return todoList; }
+    public List<Todo> GetTodoList() {
+        return todoList;
+    }
+
+    internal void SortTodoList()
+    {
+        todoList = todoList.OrderBy(e => e.done).ToList();
+    }
 }
